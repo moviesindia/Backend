@@ -1,18 +1,19 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const getTransporter = () => {
-  if (process.env.EMAIL_PROVIDER === 'smtp') {
+  if (process.env.EMAIL_PROVIDER === "smtp") {
     return nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE === 'true',
+      port: Number(process.env.SMTP_PORT),
+      secure: process.env.SMTP_SECURE === "true",
+      family: 4, // ⭐ force IPv4 (fixes Render Gmail issue)
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
     });
   }
-  return null; // console mode
+  return null;
 };
 
 const sendOTP = async (to, otp, purpose) => {
